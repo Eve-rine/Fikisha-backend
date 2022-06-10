@@ -19,8 +19,9 @@ class CustomerController extends Controller
     public function index()
     {
         try{
-            $customers = Customer::paginate()
-                ->with('orders');
+            // $users = User::with('posts')->get()
+            $customers = Customer::with('orders')->paginate(20);
+                // ->with('orders');
             return response()
                 ->json([
                     'success'   =>true,
