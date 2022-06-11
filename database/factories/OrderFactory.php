@@ -17,8 +17,11 @@ class OrderFactory extends Factory
      */
     public function definition()
     {
-        Order::create([
-            ''
-        ]);
+        return [
+            'order_number' => $this->faker->numberBetween(0, 200),
+            'customer_id' => \App\Models\Customer::inRandomOrder()->value('id'),
+            'description' => $this->faker->word(),
+            'status' => 'Pending',
+        ];
     }
 }

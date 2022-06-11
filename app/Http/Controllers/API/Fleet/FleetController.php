@@ -178,10 +178,7 @@ class FleetController extends Controller
     {
         try{
             $validator=Validator::make($request->all(),[
-                'order_number' =>'required',
-                'customer_id' =>'required',
                 'fleet_id' =>'required',
-                'status' =>'required',
             ]);
             if ($validator->fails()){
                 return response()
@@ -190,20 +187,29 @@ class FleetController extends Controller
                         'message' =>$validator->errors()->first()
                     ]);
             }
-            Order::where('id',$request->input('order_number'))
-                ->update([
+            Fleet::where('id',$request->input('fleet_id'))
+            ->update([
+                'status'    => 'On Transit'
+            ]);
+            $orders= Order::where('fleet_id',$request->input('fleet_id'))->with('customer')->get()->all();
+            $customers=[];
+            foreach($orders as $order){
+                $order->update([
                     'status'    => 'Dispatched'
                 ]);
-            Fleet::where('id',$request->input('fleet_id'))
-                ->update([
-                    'status'    => 'On Transit'
-                ]);
-            $customer=Customer::where('id',$request->input('customer_id'))->first();
-            // $customer->notify(new OrderDispatchedNotification($customer));
-            Notification::route('mail', $customer->email)->notify(new OrderDispatchedNotification($customer));
-            // OrderDispatchedNotification($customer);
-        }catch (Exception $e) {
-
+                $customers[] = $order['customer'];
+            }
+            foreach($customers as $customer){
+                Notification::route('mail', $customer->email)->notify(new OrderDispatchedNotification($customer)); 
+            }
+            return response()
+            ->json([
+                'success'   =>true,
+                'message'   =>'Orders dispatched Successfully',
+            ], 200);
+        }catch (Exception $exception) {
+            return response()
+            ->json(['message'=>$exception->getMessage()], $exception->getCode());
         }
     }
 }
