@@ -25,5 +25,9 @@ Route::group(['prefix'=>'v1'], function(){
         Route::post('logout', [AuthController::class,'logout']);
         Route::apiResource('fleet', FleetController::class);
         Route::apiResource('customers', CustomerController::class);
+        Route::post('dispatch', 'App\Http\Controllers\API\Fleet\FleetController@dispatchVehicle');
+        Route::post('load', 'App\Http\Controllers\API\Fleet\FleetController@loading');
+        Route::get('orders', 'App\Http\Controllers\API\Customer\CustomerController@getOrders');
+
     });
 });

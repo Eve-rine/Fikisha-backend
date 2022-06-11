@@ -17,9 +17,9 @@ class OrderDispatchedNotification extends Notification
      *
      * @return void
      */
-    public function __construct(User $user)
+    public function __construct()
     {
-        $this->user=$user;
+
     }
 
     /**
@@ -41,10 +41,9 @@ class OrderDispatchedNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $user=$this->user->name;
         return (new MailMessage)
                     ->subject("Order Dispatched")
-                    ->line("Hi $user, your order has been dispatched!");
+                    ->line("Hi, your order has been dispatched by Fikisha Limited!");
     }
 
     /**

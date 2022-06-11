@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API\Customer;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\Order;
 use App\Models\Fleet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -19,9 +20,7 @@ class CustomerController extends Controller
     public function index()
     {
         try{
-            // $users = User::with('posts')->get()
             $customers = Customer::with('orders')->paginate(20);
-                // ->with('orders');
             return response()
                 ->json([
                     'success'   =>true,
@@ -106,7 +105,7 @@ class CustomerController extends Controller
     {
         try{
             Customer::where('id',$id)
-                ->update(array_filter($request->all()));
+                ->update(array_filter($request->except('updated_at')));
             return response()
                 ->json([
                     'success'   =>true,
@@ -133,6 +132,22 @@ class CustomerController extends Controller
                 ->json([
                     'success'   =>true,
                     'message'   =>'You have successfully removed a customer',
+                ], 200);
+        } catch (Exception $exception) {
+            return response()
+                ->json(['message'=>$exception->getMessage()], $exception->getCode());
+        }
+    }
+
+    public function getOrders()
+    {
+        try{
+            $orders = Order::with('customer','fleet')->paginate(20);
+            return response()
+                ->json([
+                    'success'   =>true,
+                    'message'   =>'You have successfully retrieved list of orders',
+                    'data'      =>$orders
                 ], 200);
         } catch (Exception $exception) {
             return response()
