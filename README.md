@@ -19,17 +19,7 @@ On the project directory run 'php artisan serve'
 
 ```
 ### Seeding the database to add orders using laravel faker
-# This should be done after creating some customers because the orders are dependent on customers
+#### This should be done after creating some customers because the orders are dependent on customers
 Run the command 'php artisan db:seed
 
-### Compiling for production
-```
-npm run build
-```
-
-### Linting
-```
-Incase of any linting errors depending on your coding editor, run 'npm run lint'
-
-```
 
