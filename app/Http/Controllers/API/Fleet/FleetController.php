@@ -200,7 +200,9 @@ class FleetController extends Controller
                 $customers[] = $order['customer'];
             }
             foreach($customers as $customer){
-                Notification::route('mail', $customer->email)->notify(new OrderDispatchedNotification($customer)); 
+                if($customer->email !== ""){
+                    Notification::route('mail', $customer->email)->notify(new OrderDispatchedNotification($customer)); 
+                }
             }
             return response()
             ->json([
