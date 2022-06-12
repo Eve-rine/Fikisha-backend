@@ -12,7 +12,7 @@ Inside the project folder run 'composer install' to install packages
 ### Database Set up
 ```
 Create a mysql database called 'fikisha'
-Run database migrations with the command 'php artisan:migrate'
+Run database migrations with the command 'php artisan migrate'
 Create a user
 ```
 ### Run the application
