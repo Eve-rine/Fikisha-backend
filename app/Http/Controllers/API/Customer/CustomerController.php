@@ -105,7 +105,7 @@ class CustomerController extends Controller
     {
         try{
             Customer::where('id',$id)
-                ->update(array_filter($request->except('updated_at')));
+                ->update(array_filter($request->except('updated_at','created_at')));
             return response()
                 ->json([
                     'success'   =>true,
