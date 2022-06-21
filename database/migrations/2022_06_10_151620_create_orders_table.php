@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('description')->nullable();
             $table->enum('status',['Pending','Loading','Dispatched','Delivered']);
             $table->timestamps();
+            $table->string('deleted_at');
         });
     }
 

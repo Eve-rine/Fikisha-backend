@@ -142,7 +142,8 @@ class CustomerController extends Controller
     public function getOrders()
     {
         try{
-            $orders = Order::with('customer','fleet')->paginate(20);
+            $orders = Order::with('customer','fleet')->where('customer.email' !== null);
+           $fleet = Fleet::with('order')->sortByDesc('created_at');
             return response()
                 ->json([
                     'success'   =>true,

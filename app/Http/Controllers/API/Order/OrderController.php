@@ -4,6 +4,9 @@ namespace App\Http\Controllers\API\Order;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Mockery\Exception;
+use App\Models\Order;
+use Illuminate\Support\Facades\Validator;
 
 class OrderController extends Controller
 {
@@ -14,7 +17,18 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
+            try{
+                $orders = Order::with('orders', 'customer', 'fleet')->paginate(20);
+                return response()
+                    ->json([
+                        'success'   =>true,
+                        'message'   =>'You have successfully retrieved list of orders',
+                        'data'      =>$orders
+                    ], 200);
+            } catch (Exception $exception) {
+                return response()
+                    ->json(['message'=>$exception->getMessage()], $exception->getCode());
+            }
     }
 
     /**
@@ -35,7 +49,35 @@ class OrderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try{
+            $validator=Validator::make($request->all(),[
+                'order_number'   => 'required',
+                'customer_id'   => 'required',
+                'description'   => 'required',
+            ]);
+            if ($validator->fails()) {
+                return response()
+                    ->json([
+                        'success' => false,
+                        'message' =>$validator->errors()->first()
+                    ]);
+            }
+            $order=Order::create([
+                'order_number'   =>$request->input('order_number'),
+                'customer_id'  =>$request->input('customer_id'),
+                'description'  =>$request->input('description'),
+                'status'  => 'Pending'
+            ]);
+            return response()
+                ->json([
+                    'success'   =>true,
+                    'message'   =>'You have successfully added a new order',
+                    'data'      =>$order
+                ], 200);
+        } catch (Exception $exception) {
+            return response()
+                ->json(['message'=>$exception->getMessage()], $exception->getCode());
+        }
     }
 
     /**
@@ -46,7 +88,19 @@ class OrderController extends Controller
      */
     public function show($id)
     {
-        //
+        try{
+            $order = Order::where('id',$id)
+                ->first();
+            return response()
+                ->json([
+                    'success'   =>true,
+                    'message'   =>'You have successfully retrieved order details',
+                    'data'      =>$order
+                ], 200);
+        } catch (Exception $exception) {
+            return response()
+                ->json(['message'=>$exception->getMessage()], $exception->getCode());
+        }
     }
 
     /**
@@ -69,7 +123,18 @@ class OrderController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        try{
+            Order::where('id',$id)
+                 ->update(array_filter($request->except('updated_at','created_at')));
+             return response()
+                 ->json([
+                     'success'   =>true,
+                     'message'   =>'You have successfully updated the order',
+                 ], 200);
+         } catch (Exception $exception) {
+             return response()
+                 ->json(['message'=>$exception->getMessage()], $exception->getCode());
+         }
     }
 
     /**
@@ -80,6 +145,17 @@ class OrderController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try{
+            Order::where('id',$id)
+                ->delete();
+            return response()
+                ->json([
+                    'success'   =>true,
+                    'message'   =>'You have successfully removed an order',
+                ], 200);
+        } catch (Exception $exception) {
+            return response()
+                ->json(['message'=>$exception->getMessage()], $exception->getCode());
+        }
     }
 }
